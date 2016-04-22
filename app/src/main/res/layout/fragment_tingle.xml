@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:background="@color/colorBackground">
+
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/headline"
+    android:textSize="20sp"
+    android:layout_marginTop="10dp"
+    android:layout_marginLeft="10dp"
+    android:textColor="@color/colorText"
+    />
+
+<View
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:background="@color/colorText" />
+
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:id="@+id/last_thing"
+    android:textColor="@color/colorText" />
+
+<Button
+    android:id="@+id/add_button"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/heading_create"
+    android:background="@color/colorAddButton"
+    android:textSize="24sp"
+    />
+
+<!-- Thin horizontal line -->
+<View
+    android:layout_width="match_parent"
+    android:layout_height="10dp" />
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/what_thing"
+        android:textColor="@color/colorText"
+        android:textSize="24sp"
+        android:layout_marginLeft="10dp"
+        android:layout_weight="2"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/what_text"
+        android:background="@color/colorText"
+        android:layout_weight="1"
+        android:layout_marginRight="10dp"
+        />
+</LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginTop="10dp"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/where"
+        android:textColor="@color/colorText"
+        android:textSize="24sp"
+        android:layout_marginLeft="10dp"
+        android:layout_weight="2"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/where_text"
+        android:background="@color/colorText"
+        android:layout_weight="1"
+        android:layout_marginRight="10dp"
+        />
+
+</LinearLayout>
+
+    <Button
+        android:id="@+id/barcode_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/barcode"
+        android:background="@color/colorAddButton"
+        android:textSize="24sp"
+        android:layout_marginTop="10dp"
+        />
+
+    <Button
+        android:id="@+id/picture_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/take_picture"
+        android:background="@color/colorAddButton"
+        android:textSize="24sp"
+        android:layout_marginTop="5dp"
+        />
+
+<Button
+    android:id="@+id/list_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/list_button"
+    android:layout_gravity="bottom|center"
+    android:layout_marginTop="30dp"
+    />
+
+</LinearLayout>
