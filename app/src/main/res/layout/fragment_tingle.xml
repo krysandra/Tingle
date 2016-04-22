@@ -6,7 +6,9 @@
               android:orientation="vertical"
               android:background="@color/colorBackground">
 
-<TextView
+
+
+    <TextView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="@string/headline"
@@ -20,6 +22,12 @@
     android:layout_width="match_parent"
     android:layout_height="1dp"
     android:background="@color/colorText" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/last_thing_image"
+        />
 
 <TextView
     android:layout_width="match_parent"

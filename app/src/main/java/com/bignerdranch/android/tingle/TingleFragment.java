@@ -3,8 +3,11 @@ package com.bignerdranch.android.tingle;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,6 +22,7 @@ import android.content.ActivityNotFoundException;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -29,13 +33,49 @@ public class TingleFragment extends Fragment{
     private Button listAll;
     private Button scanBarcode;
     private Button takePicture;
+    private File mPhotoFile;
     private ImageView lastAddedImage;
     private TextView lastAdded;
     private TextView newWhat, newWhere;
     private String barcodeName = null;
+    private String image;
 
     //fake database
     private static ThingsDB thingsDB;
+
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == 0) {
+            if (resultCode == Activity.RESULT_OK) {
+                String contents = intent.getStringExtra("SCAN_RESULT");
+                String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
+                // Handle successful scan
+                new FetchOutpanTask().execute(contents);
+
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                // Handle cancel
+                Toast toast = Toast.makeText(getActivity(), "Scan was Cancelled!", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.TOP, 25, 400);
+                toast.show();
+            }
+        }
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
+                image = "tmp.jpg";
+                // Handle successful camera action
+                Toast toast = Toast.makeText(getActivity(), "Picture saved", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.TOP, 25, 400);
+                toast.show();
+
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                // Handle cancel
+                image = null;
+                Toast toast = Toast.makeText(getActivity(), "Camera was Cancelled!", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.TOP, 25, 400);
+                toast.show();
+            }
+        }
+
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,7 +86,6 @@ public class TingleFragment extends Fragment{
         //updateUI();
 
         thingsDB = ThingsDB.get(getActivity());
-
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -72,11 +111,25 @@ public class TingleFragment extends Fragment{
             Log.e("onCreate", "Scanner Not Found", anfe);
         }
         takePicture = (Button) v.findViewById(R.id.picture_button);
+        final String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/picFolder/";
+        File newdir = new File(dir);
+        newdir.mkdirs();
 
         takePicture.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                 final Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                String file = dir + "tmp.jpg";
+                File newfile = new File(file);
+                try {
+                    newfile.createNewFile();
+                } catch (IOException e) {
+                    Toast toast = Toast.makeText(getActivity(), "File was not created", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.TOP, 25, 400);
+                    toast.show();
+                }
+                Uri outputFileUri = Uri.fromFile(newfile);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
                 startActivityForResult(cameraIntent, 1);
             }
 
@@ -103,6 +156,17 @@ public class TingleFragment extends Fragment{
                     newWhere.getText().toString());
                     thingsDB.addThing(newThing);
                     newWhat.setText(""); newWhere.setText("");
+
+                    File externalFilesDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/picFolder/");
+                    File imagefile = new File(externalFilesDir, "tmp.jpg");
+
+                    if(imagefile.exists()) {
+                        File directory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/picFolder/");
+                        File from      = new File(directory, "tmp.jpg");
+                        File to        = new File(directory, "IMG_" + newThing.getId() + ".jpg");
+                        from.renameTo(to);
+                    }
+
                     updateUI(newThing.getId());
 
                     if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -138,6 +202,7 @@ public class TingleFragment extends Fragment{
         });
 
         lastAdded = (TextView) v.findViewById(R.id.last_thing);
+        lastAddedImage = (ImageView) v.findViewById(R.id.last_thing_image);
 
         return v;
     }
@@ -147,43 +212,18 @@ public class TingleFragment extends Fragment{
         int s = thingsDB.size();
         if(s>0) {
             lastAdded.setText(thingsDB.get(id).toString());
-        }
-
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode == 0) {
-            if (resultCode == Activity.RESULT_OK) {
-                String contents = intent.getStringExtra("SCAN_RESULT");
-                String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
-                // Handle successful scan
-                new FetchOutpanTask().execute(contents);
-
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                // Handle cancel
-                Toast toast = Toast.makeText(getActivity(), "Scan was Cancelled!", Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.TOP, 25, 400);
-                toast.show();
+            mPhotoFile = thingsDB.getPhotoFile(thingsDB.get(id));
+            if(mPhotoFile == null || !mPhotoFile.exists()) {
+                lastAddedImage.setImageDrawable(null);
             }
-        }
-        if (requestCode == 1) {
-            if (resultCode == Activity.RESULT_OK) {
-                String contents = intent.getStringExtra("CAMERA_RESULT");
-                String format = intent.getStringExtra("CAMERA_RESULT_FORMAT");
-                // Handle successful camera action
-                Toast toast = Toast.makeText(getActivity(), "Camera contents: " + contents + ", format: " +format, Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.TOP, 25, 400);
-                toast.show();
-
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                // Handle cancel
-                Toast toast = Toast.makeText(getActivity(), "Camera was Cancelled!", Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.TOP, 25, 400);
-                toast.show();
+            else {
+                Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
+                lastAddedImage.setImageBitmap(bitmap);
             }
         }
 
     }
+
 
     private void barcodeName(String name) {
         if(name != "null") {

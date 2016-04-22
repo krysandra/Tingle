@@ -7,6 +7,7 @@ public class Thing {
     private String mWhat = null;
     private String mWhere = null;
     private UUID mId = null;
+    private String mImg = null;
 
     public Thing (String what, String where)
     {
@@ -30,6 +31,10 @@ public class Thing {
     public String getWhere() { return mWhere; }
     public void setWhere(String where) { mWhere = where; }
     public UUID getId() { return mId; }
+
+    public String getPhotoFilename() {
+        return "IMG_" + getId().toString() + ".jpg";
+    }
 
     public String oneLine(String pre, String post) {
         return pre + mWhat + " " + post + mWhere;

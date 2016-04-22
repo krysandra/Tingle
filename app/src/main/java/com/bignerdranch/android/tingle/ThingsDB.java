@@ -4,11 +4,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 
 import com.bignerdranch.android.tingle.database.ThingCursorWrapper;
 import com.bignerdranch.android.tingle.database.TingleBaseHelper;
 import com.bignerdranch.android.tingle.database.TingleDbSchema.TingleTable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -80,6 +82,15 @@ public class ThingsDB {
                 cursor.close();
             }
         }
+
+        public File getPhotoFile(Thing thing) {
+
+            File externalFilesDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/picFolder/");
+            if(externalFilesDir == null) { return null; }
+            return new File(externalFilesDir, thing.getPhotoFilename());
+        }
+
+
         // Fill database for testing purposes
         private ThingsDB(Context context) {
             mContext = context.getApplicationContext();
