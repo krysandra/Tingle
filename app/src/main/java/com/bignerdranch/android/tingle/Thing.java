@@ -1,5 +1,6 @@
 package com.bignerdranch.android.tingle;
 
+import java.util.Date;
 import java.util.UUID;
 
 public class Thing {
@@ -8,6 +9,7 @@ public class Thing {
     private String mWhere = null;
     private UUID mId = null;
     private String mImg = null;
+    private Date mRegistrationTime = null;
 
     public Thing (String what, String where)
     {

@@ -1,5 +1,7 @@
 package com.bignerdranch.android.tingle.database;
 
+import java.sql.Date;
+
 public class TingleDbSchema {
     public static final class TingleTable {
         public static final String NAME = "things";

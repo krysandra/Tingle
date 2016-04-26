@@ -67,6 +67,22 @@ public class ThingsDB {
             }
             return things.size();
         }
+        public List<Thing> searchThingsDB(String query) {
+            List<Thing> searchResults = new ArrayList<>();
+            ThingCursorWrapper cursor = queryThings(TingleTable.Cols.what_thing + " LIKE ? ORDER BY " + TingleTable.Cols.what_thing,  new String[]{"%"+query+"%"});
+
+            try {
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    searchResults.add(cursor.getThing());
+                    cursor.moveToNext();
+                }
+            }finally {
+                cursor.close();
+
+            }
+            return searchResults;
+        }
 
         public Thing get(UUID id){ //return mThingsDB.get(i);
             ThingCursorWrapper cursor = queryThings(
@@ -95,13 +111,6 @@ public class ThingsDB {
         private ThingsDB(Context context) {
             mContext = context.getApplicationContext();
             mDatabase = new TingleBaseHelper(mContext).getWritableDatabase();
-
-            /*
-            mThingsDB= new ArrayList<Thing>();
-            mThingsDB.add(new Thing("Android Pnone", "Desk"));
-            mThingsDB.add(new Thing("Big Nerd book", "Desk"));
-            mThingsDB.add(new Thing("Cool thing", "The cool place"));
-            */
         }
 
         private ThingCursorWrapper queryThings(String whereClause, String[] whereArgs) {

@@ -13,10 +13,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.support.v7.widget.SearchView;
 import android.widget.TextView;
 import android.content.ActivityNotFoundException;
 import android.util.Log;
@@ -39,8 +43,9 @@ public class TingleFragment extends Fragment{
     private TextView newWhat, newWhere;
     private String barcodeName = null;
     private String image;
+    private static final String TAG = "TingleFragment";
+    private String searchWord;
 
-    //fake database
     private static ThingsDB thingsDB;
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -84,8 +89,38 @@ public class TingleFragment extends Fragment{
 
         //lastAdded = (TextView) findViewById(R.id.last_thing);
         //updateUI();
-
+        setHasOptionsMenu(true);
         thingsDB = ThingsDB.get(getActivity());
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
+        super.onCreateOptionsMenu(menu, menuInflater);
+        menuInflater.inflate(R.menu.fragment_tingle, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.menu_item_search);
+        final SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                Log.d(TAG, "QueryTextSubmit: " + s);
+                Toast toast = Toast.makeText(getActivity(), "Searched for: " + s , Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.TOP, 25, 400);
+                toast.show();
+                searchWord = s;
+                Intent i = new Intent(getActivity(), ListActivity.class);
+                i.putExtra("searchWord", searchWord);
+                startActivity(i);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                Log.d(TAG, "QueryTextChange: " + s);
+                return false;
+            }
+        });
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -197,6 +232,7 @@ public class TingleFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getActivity(), ListActivity.class);
+                i.putExtra("searchWord", (String) null);
                 startActivity(i);
             }
         });

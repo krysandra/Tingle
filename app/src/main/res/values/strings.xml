@@ -9,4 +9,6 @@
     <string name="list_button">List of all things</string>
     <string name="take_picture">Add picture</string>
     <string name="title_activity_list">ListActivity</string>
+    <string name="search">Search for at thing</string>
+    <string name="clear_search">Clear search</string>
 </resources>

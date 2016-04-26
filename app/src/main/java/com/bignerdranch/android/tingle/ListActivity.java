@@ -26,9 +26,13 @@ public class ListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
         listView = (ListView) findViewById(R.id.thingsList);
+        String searchValue = getIntent().getExtras().getString("searchWord");
 
         thingsDB = ThingsDB.get(this);
-        thingList = thingsDB.getThingsDB();
+        if(searchValue != null && searchValue != "") {
+           thingList = thingsDB.searchThingsDB(searchValue);
+        }
+        else { thingList = thingsDB.getThingsDB();}
 
         final ArrayAdapter adapter = new ArrayAdapter(this,
                 android.R.layout.activity_list_item, android.R.id.text1, thingList);
